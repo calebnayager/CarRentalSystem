@@ -1,11 +1,20 @@
 package com.carrental;
 
+import javax.swing.SwingUtilities;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
+        //Launch GUI
+        SwingUtilities.invokeLater(() -> {
+            CarRentalGUI gui = new CarRentalGUI();
+            gui.setVisible(true); 
+        });
+
+   
         FleetManager fleetManager = new FleetManager();
         RentalManager rentalManager = new RentalManager();
         Scanner scanner = new Scanner(System.in);
