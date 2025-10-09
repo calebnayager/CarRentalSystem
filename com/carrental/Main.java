@@ -1,24 +1,36 @@
 package com.carrental;
 
-import javax.swing.SwingUtilities;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
-        //Launch GUI
-        SwingUtilities.invokeLater(() -> {
-            CarRentalGUI gui = new CarRentalGUI();
-            gui.setVisible(true); 
-        });
-
-   
         FleetManager fleetManager = new FleetManager();
         RentalManager rentalManager = new RentalManager();
         Scanner scanner = new Scanner(System.in);
 
+        //Load or Create Vehicles
+        File vehicleFile = new File("vehicles.dat");
+        if (!vehicleFile.exists()) {
+            System.out.println("No saved vehicles found. Adding default vehicles...");
+            fleetManager.addVehicle(new Vehicle("V001", "Sedan", "Toyota Corolla", 350));
+            fleetManager.addVehicle(new Vehicle("V002", "SUV", "Ford EcoSport", 500));
+            fleetManager.addVehicle(new Vehicle("V003", "Hatchback", "Volkswagen Polo", 300));
+            fleetManager.addVehicle(new Vehicle("V004", "Luxury", "BMW 5 Series", 1200));
+            fleetManager.saveVehicles(); // save defaults for future 
+        } else {
+            fleetManager.loadVehicles(); 
+        }
+        
+        //Start GUI
+        java.awt.EventQueue.invokeLater(() -> {
+            CarRentalGUI gui = new CarRentalGUI(); 
+            gui.setVisible(true);
+        });
+        
+        //console
         while (true) {
             System.out.println("\n===== Car Rental System =====");
             System.out.println("1. View all vehicles");
@@ -35,13 +47,13 @@ public class Main {
             String choice = scanner.nextLine();
 
             switch (choice) {
-                case "1": // View all vehicles
+                case "1":
                     List<Vehicle> allVehicles = fleetManager.getVehicles();
                     if (allVehicles.isEmpty()) System.out.println("No vehicles found.");
                     else allVehicles.forEach(System.out::println);
                     break;
 
-                case "2": // Add vehicle
+                case "2":
                     try {
                         System.out.print("Enter vehicle ID: ");
                         String id = scanner.nextLine();
@@ -54,20 +66,22 @@ public class Main {
 
                         Vehicle vehicle = new Vehicle(id, type, model, price);
                         fleetManager.addVehicle(vehicle);
+                        fleetManager.saveVehicles();
                         System.out.println("Vehicle added successfully!");
                     } catch (Exception e) {
                         System.out.println("Error adding vehicle. Check inputs.");
                     }
                     break;
 
-                case "3": // Remove vehicle
+                case "3":
                     System.out.print("Enter vehicle ID to remove: ");
                     String removeId = scanner.nextLine();
                     fleetManager.removeVehicle(removeId);
+                    fleetManager.saveVehicles();
                     System.out.println("Vehicle removed (if it existed).");
                     break;
 
-                case "4": // Rent vehicle
+                case "4":
                     List<Vehicle> available = fleetManager.getAvailableVehicles();
                     if (available.isEmpty()) {
                         System.out.println("No vehicles available to rent.");
@@ -75,7 +89,7 @@ public class Main {
                     }
                     System.out.println("--- Available Vehicles ---");
                     for (int i = 0; i < available.size(); i++) {
-                        System.out.println(i + 1 + ". " + available.get(i));
+                        System.out.println((i + 1) + ". " + available.get(i));
                     }
                     try {
                         System.out.print("Select vehicle number to rent: ");
@@ -101,7 +115,7 @@ public class Main {
                     }
                     break;
 
-                case "5": // Return vehicle
+                case "5":
                     System.out.print("Enter vehicle ID to return: ");
                     String returnId = scanner.nextLine();
                     rentalManager.returnVehicle(returnId);
@@ -109,7 +123,7 @@ public class Main {
                     System.out.println("Vehicle returned (if it was rented).");
                     break;
 
-                case "6": // Show available vehicles
+                case "6":
                     List<Vehicle> availableVehicles = fleetManager.getAvailableVehicles();
                     if (availableVehicles.isEmpty()) System.out.println("No vehicles available.");
                     else {
@@ -118,7 +132,7 @@ public class Main {
                     }
                     break;
 
-                case "7": // Show active rentals
+                case "7":
                     List<Rental> activeRentals = rentalManager.getActiveRentals();
                     if (activeRentals.isEmpty()) System.out.println("No active rentals.");
                     else {
@@ -127,12 +141,12 @@ public class Main {
                     }
                     break;
 
-                case "8": // Show total revenue
+                case "8":
                     double revenue = rentalManager.getTotalRevenue();
                     System.out.println("Total revenue: R" + revenue);
                     break;
 
-                case "9": // Exit
+                case "9":
                     System.out.println("Saving vehicles and exiting...");
                     fleetManager.saveVehicles();
                     System.exit(0);
