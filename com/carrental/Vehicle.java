@@ -1,6 +1,8 @@
 package com.carrental;
 
-public class Vehicle {
+import java.io.Serializable;
+
+public class Vehicle implements Serializable {
     private String vehicleId;
     private String type;
     private String model;
@@ -12,7 +14,7 @@ public class Vehicle {
         this.type = type;
         this.model = model;
         this.rentalPricePerDay = rentalPricePerDay;
-        this.isAvailable = true; // default available
+        this.isAvailable = true;
     }
 
     public String getVehicleId() { return vehicleId; }

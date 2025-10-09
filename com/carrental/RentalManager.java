@@ -1,32 +1,27 @@
 package com.carrental;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RentalManager {
-    private List<Rental> rentals = new ArrayList<>();
+    private List<Rental> rentals;
 
-    public void rentVehicle(Vehicle vehicle, String customerName, LocalDate rentalDate, LocalDate returnDate) {
-        if (!vehicle.isAvailable()) {
-            System.out.println("[ERROR] Vehicle not available.");
-            return;
-        }
-        Rental rental = new Rental(vehicle, customerName, rentalDate, returnDate);
+    public RentalManager() {
+        rentals = new ArrayList<>();
+    }
+
+    public void rentVehicle(Vehicle vehicle, String customerName, java.time.LocalDate rentDate, java.time.LocalDate returnDate) {
+        Rental rental = new Rental(vehicle, customerName, rentDate, returnDate);
         rentals.add(rental);
-        vehicle.setAvailable(false);
-        System.out.println("[OK] Vehicle rented: " + rental);
     }
 
     public void returnVehicle(String vehicleId) {
         for (Rental r : rentals) {
             if (r.getVehicle().getVehicleId().equals(vehicleId) && !r.getVehicle().isAvailable()) {
-                r.getVehicle().setAvailable(true);
-                System.out.println("[OK] Vehicle returned: " + r.getVehicle());
-                return;
+                r.endRental();
+                break;
             }
         }
-        System.out.println("[ERROR] Vehicle not found or already returned.");
     }
 
     public List<Rental> getActiveRentals() {
@@ -40,7 +35,7 @@ public class RentalManager {
     public double getTotalRevenue() {
         double total = 0;
         for (Rental r : rentals) {
-            total += r.calculateCost();
+            total += r.getRentalPrice();
         }
         return total;
     }
