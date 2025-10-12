@@ -65,7 +65,7 @@ Data Files
 
 -The system is completely OOP-based (Classes etc).
 -All data is saved when the program closes.
--If you want to view the code you can view it on Github through "the com/carrental" folder.
+-If you want to view the code you can view it on Github through "COM/CARRENTAL" FOLDER AND SELECT THE ".JAVA" FILES ONLY.
 
 Author
 Created by: Caleb Nayager
